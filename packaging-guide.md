@@ -141,10 +141,14 @@ It is unclear to a user which vignette is the introductory one. The rOpenSci Pac
 TODO continue
 
 
+Function documentation
+
 Missing documentation of argument defaults
 - `clip_ras_ext` nqsegs = 180L
 - `extract_at_poly` func = mean
 - ...
+
+
 
 Found some URLs moved or broken
 
@@ -174,8 +178,169 @@ See \href{https://cran.r-project.org/web/packages/units/vignettes/measurement_un
 
 
 Testing
-TODO: count the number of expect_no_error() / tests
-https://mtlynch.io/good-developers-bad-tests/
+
+There is good test coverage in the package but I am a bit concerned about the number of times the authors use the `expect_no_error` function. 
+When I think of effective package testing, I think of both clarity for the user reading the tests and in the authors setting up expectations for how the package may fail (anticipating your own errors, warnings or messages). What does the test `expect_no_error` communicate to the user or set up as expectations?
+
+Here are some ideas for expanding or adjusting the tests:
+
+- inline comments in the test scripts to explain to readers/our future selves as authors ([example](https://github.com/tidyverse/ggplot2/blob/main/tests/testthat/test-coord-flip.R))
+- narrow the scope of each `test_that()` call and expand on the description
+    - from [https://testthat.r-lib.org/reference/test_that.html], "A test encapsulates a series of expectations about a small, self-contained unit of functionality"
+    - comparing in {chopin} eg. `test-gridding.R` ([L116](https://github.com/NIEHS/chopin/blob/main/tests/testthat/test-gridding.R#L116C1-L116C50)) to eg.{rnaturalearth} [`test_ne_states.R`](https://github.com/ropensci/rnaturalearth/blob/master/tests/testthat/test_ne_states.R)
+        - we see {chopin} have one blanket description "grid split is well done" to contains all the tests
+        - the {rnaturalearth} test has four smaller, more digestible test_that chunks that run a series of related tests
+        - as a reader, I know what I'm looking at and find it easy to look for a specific test
+        - as a potential contributor, I know which test might be related to my bug, or I have a good example of how to structure a potential new test in a pull request
+- more examples: [dplyr test-join-cols.R](https://github.com/tidyverse/dplyr/blob/main/tests/testthat/test-join-cols.R), [purrr test-pluck.R](https://github.com/tidyverse/purrr/blob/main/tests/testthat/test-pluck.R)
+
+
+
+```r
+library(data.table)
+
+paths <- dir('../chopin/tests/testthat', full.names = TRUE)
+DT <- data.table(path = paths)
+
+counts <- DT[, tstrsplit(grep('testthat::', readLines(path), value = TRUE), c('\\('), keep = 1), by = path]
+
+counts[, .N, V1][order(-N)]
+                                V1     N
+                            <char> <int>
+ 1:      testthat::expect_no_error    59
+ 2:         testthat::expect_error    47
+ 3:            testthat::test_that    30
+ 4:         testthat::expect_equal    20
+ 5:          testthat::expect_true    16
+ 6:      testthat::expect_s4_class    12
+ 7:      testthat::expect_s3_class    12
+ 8:      testthat::expect_no_error    12
+ 9:         testthat::expect_equal    10
+10:       testthat::expect_message     7
+11:         testthat::expect_error     6
+12:      testthat::expect_s3_class     5
+13:          testthat::expect_true     4
+14:     testthat::expect_condition     2
+15:       testthat::expect_warning     2
+16:       testthat::expect_warning     2
+17:    testthat::expect_no_warning     1
+
+counts[, .N, .(path, V1)][order(path, -N)]
+                                                 path
+                                               <char>
+ 1:    ../chopin/tests/testthat/test-any_class_args.R
+ 2:    ../chopin/tests/testthat/test-any_class_args.R
+ 3:    ../chopin/tests/testthat/test-any_class_args.R
+ 4:             ../chopin/tests/testthat/test-check.R
+ 5:             ../chopin/tests/testthat/test-check.R
+ 6:             ../chopin/tests/testthat/test-check.R
+ 7:             ../chopin/tests/testthat/test-check.R
+ 8:             ../chopin/tests/testthat/test-check.R
+ 9:             ../chopin/tests/testthat/test-check.R
+10:             ../chopin/tests/testthat/test-check.R
+11:             ../chopin/tests/testthat/test-check.R
+12: ../chopin/tests/testthat/test-distribute_suites.R
+13: ../chopin/tests/testthat/test-distribute_suites.R
+14: ../chopin/tests/testthat/test-distribute_suites.R
+15: ../chopin/tests/testthat/test-distribute_suites.R
+16: ../chopin/tests/testthat/test-distribute_suites.R
+17: ../chopin/tests/testthat/test-distribute_suites.R
+18: ../chopin/tests/testthat/test-distribute_suites.R
+19: ../chopin/tests/testthat/test-distribute_suites.R
+20: ../chopin/tests/testthat/test-distribute_suites.R
+21: ../chopin/tests/testthat/test-distribute_suites.R
+22: ../chopin/tests/testthat/test-distribute_suites.R
+23: ../chopin/tests/testthat/test-distribute_suites.R
+24: ../chopin/tests/testthat/test-distribute_suites.R
+25:          ../chopin/tests/testthat/test-gridding.R
+26:          ../chopin/tests/testthat/test-gridding.R
+27:          ../chopin/tests/testthat/test-gridding.R
+28:          ../chopin/tests/testthat/test-gridding.R
+29:          ../chopin/tests/testthat/test-gridding.R
+30:          ../chopin/tests/testthat/test-gridding.R
+31:          ../chopin/tests/testthat/test-gridding.R
+32:          ../chopin/tests/testthat/test-gridding.R
+33:          ../chopin/tests/testthat/test-gridding.R
+34:          ../chopin/tests/testthat/test-gridding.R
+35:          ../chopin/tests/testthat/test-gridding.R
+36:      ../chopin/tests/testthat/test-par_fallback.R
+37:      ../chopin/tests/testthat/test-par_fallback.R
+38:      ../chopin/tests/testthat/test-par_fallback.R
+39:     ../chopin/tests/testthat/test-preprocessing.R
+40:     ../chopin/tests/testthat/test-preprocessing.R
+41:     ../chopin/tests/testthat/test-preprocessing.R
+42:     ../chopin/tests/testthat/test-preprocessing.R
+43:     ../chopin/tests/testthat/test-preprocessing.R
+44:     ../chopin/tests/testthat/test-preprocessing.R
+45:        ../chopin/tests/testthat/test-processing.R
+46:        ../chopin/tests/testthat/test-processing.R
+47:        ../chopin/tests/testthat/test-processing.R
+48:        ../chopin/tests/testthat/test-processing.R
+49:        ../chopin/tests/testthat/test-processing.R
+50:        ../chopin/tests/testthat/test-processing.R
+51:        ../chopin/tests/testthat/test-processing.R
+52:        ../chopin/tests/testthat/test-processing.R
+53:        ../chopin/tests/testthat/test-processing.R
+                                                 path
+                                V1     N
+                            <char> <int>
+ 1:          testthat::expect_true     5
+ 2:            testthat::test_that     1
+ 3:      testthat::expect_s4_class     1
+ 4:         testthat::expect_equal    10
+ 5:            testthat::test_that     9
+ 6:      testthat::expect_no_error     8
+ 7:         testthat::expect_error     8
+ 8:         testthat::expect_equal     4
+ 9:      testthat::expect_s3_class     2
+10:      testthat::expect_s4_class     2
+11:         testthat::expect_error     1
+12:      testthat::expect_no_error     9
+13:      testthat::expect_no_error     8
+14:      testthat::expect_s3_class     5
+15:            testthat::test_that     4
+16:      testthat::expect_s3_class     4
+17:          testthat::expect_true     4
+18:         testthat::expect_error     2
+19:          testthat::expect_true     2
+20:         testthat::expect_error     2
+21:         testthat::expect_equal     2
+22:         testthat::expect_equal     2
+23:     testthat::expect_condition     2
+24:      testthat::expect_s4_class     1
+25:         testthat::expect_error    18
+26:      testthat::expect_no_error    17
+27:       testthat::expect_message     7
+28:            testthat::test_that     6
+29:          testthat::expect_true     6
+30:      testthat::expect_s4_class     6
+31:         testthat::expect_equal     5
+32:       testthat::expect_warning     2
+33:       testthat::expect_warning     1
+34:      testthat::expect_s3_class     1
+35:    testthat::expect_no_warning     1
+36:            testthat::test_that     1
+37:      testthat::expect_no_error     1
+38:         testthat::expect_error     1
+39:         testthat::expect_equal     4
+40:            testthat::test_that     2
+41:         testthat::expect_error     2
+42:         testthat::expect_equal     2
+43:      testthat::expect_s3_class     1
+44:      testthat::expect_s4_class     1
+45:      testthat::expect_no_error    25
+46:         testthat::expect_error    19
+47:            testthat::test_that     7
+48:      testthat::expect_s3_class     4
+49:      testthat::expect_no_error     3
+50:          testthat::expect_true     3
+51:      testthat::expect_s4_class     1
+52:         testthat::expect_equal     1
+53:       testthat::expect_warning     1
+                                V1     N
+```                                
+
+
 
 Examples
 
@@ -184,16 +349,53 @@ Package dependencies
 Consider listing system requirements (eg. netcdf) using recommendations here
 https://github.com/rstudio/r-system-requirements
 
+See example from [{magick}](https://github.com/ropensci/magick/blob/master/DESCRIPTION#L20)
 
 Version control
 `usethis::git_vaccinate()`
 
 
 
-TODO:
+Description
+
+Current
+
+```
+Package: chopin
+Title: CHOPIN: Computation for Climate and Health research On Parallelized INfrastructure
+Description: It enables users with basic understanding on geospatial data
+    and sf and terra functions to parallelize geospatial operations for
+    geospatial exposure assessment modeling and covariate computation.
+    Parallelization is done by dividing large datasets into sub-regions
+    with regular grids and data's own hierarchy. A computation over the
+    large number of raster files can be parallelized with a chopin
+    function as well.
+```
+
+Suggestions
+
+- I think there's a lot of useful information in the [flowchart](https://github.com/NIEHS/chopin/blob/main/man/figures/README-flowchart-mermaid-1.png), how can we incorporate more obviously?
+- No need to repeat the package name, capitalised, in the title
+- I think the acronym is neat, but the name stands on it's own. Broadening the scope would help users understand how they can use {chopin} and this starts at the title
+- I don't think it's necessary to state the expectations of users in the description
+- Read examples [here](https://cran.r-project.org/web/packages/available_packages_by_name.html)
+
+```
+Package: chopin
+Title: Parallelize Geospatial Operations Over Sub-Regions, Regular Grids and Lists of Rasters
+Description: It enables users to parallelize geospatial operations over
+    sub-regions, regular grids and lists of rasters. Parallelization 
+    is done by dividing large datasets into sub-regions
+    with regular grids and data's own hierarchy. A computation over the
+    large number of raster files can be parallelized with a chopin
+    function as well. (TODO: maybe mention {future}, {exactextractr}, {terra}, {sf})
+```
+
+
+Misc/unsorted
 
 - TODO check for test of 1 length integer n_clusters par_group_balanced?
-- Is it necessary to reexport nc_points instead of just using the example data from sf directly?
+- Is it necessary to reexport nc_points instead of just using the example data from sf directly? (Note it is used  directly from {sf} in the README)
 - Sometimes, I wonder if wrapping the specific functions under a chopin function obscures for a user what should be an expected skill: transforming crs
     - `reproject_std` 
     - `vect_valid_repair`
@@ -217,3 +419,4 @@ TODO:
 - Title is possibly too specific
 - Edit Title so chopin is lowercase and wrapped in single quotes
 - As you prepare to submit to CRAN, review this list: https://github.com/ThinkR-open/prepare-for-cran
+- styler
