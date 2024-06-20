@@ -45,3 +45,10 @@ https://github.com/r-tmap/tmap/blob/master/R/tmapShape.R
 
 
 version numbering
+
+tags, releases
+
+
+
+Generally - we could use a written version of the flowchart, along with expected inputs/outputs
+Perhaps under ?chopin
