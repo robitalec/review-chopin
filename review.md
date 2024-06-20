@@ -33,14 +33,16 @@ The package includes all the following forms of documentation:
     - [ ] Consider improving descriptions and commenting of tests
     - [ ] Consider replacing tests `expect_no_error` with more specific expectations
 - [ ] **Packaging guidelines**: The package conforms to the rOpenSci packaging guidelines
-    - [ ] See details in other sections
     - [ ] See suggestions below
+    - [ ] See details in other sections
  
 ### Review Comments
 
 Thank you for inviting me to review @beatrizmilz and, as always, a huge thank you to the broader rOpenSci community for all of your incredible contributions, inclusion and support. 
 
 Thank you @sigmafelix and @kyle-messier for this interesting package with functionality I haven't seen elsewhere that should be a great tool for a wide userbase. 
+
+Before I start - I really link the name because it evokes chopping up spatial objects into chunks and -- music! Great choice. 
 
 --- 
 
@@ -50,7 +52,7 @@ My first main and most important comment is that, at the moment, I find {chopin}
 I think the pitch is currently too narrow (also mentioned [here](https://github.com/ropensci/software-review/issues/630
 )), which might turn away folks who don't identify with "health" or "climate" research. I think there is potential for many users across disciplines who have large spatial data (everything is spatial!) to use {chopin} to perform analyses in more manageable chunks, allowing folks to improve the efficiency of their analyses and extend the potential of their machines. 
 
-When I open the README, one of the first things I see is notes on data restrictions and z dimensions and spherical geometry. I think this should come later in a caveats section or FAQ or common issues vignette. 
+When I open the README, one of the first things I see is notes on data restrictions and z dimensions and spherical geometry. I think this should come later in a caveats section or FAQ vignette. 
 
 Next, we get to "Basic design" which reads more like an overview of functions but also gets into which packages underpin {chopin} functionality, package versions, and registering parallel workers. I think this is the section that really needs to give users a concise and clear overview of the functions. This can and should be reused in other places to follow the recommended principle of *multiple points of entry*, where users should be anticipated to first encounter {chopin} across every source of information (README, documentation, vignettes) and given a clear introduction. 
 
@@ -66,7 +68,7 @@ It seems there are currently three main families of functions exported and numbe
 
 These are the kinds of questions I'm left as an early user with after reading the overview
 - Should `par_make_*` functions be split into a new `grid_*` family of functions?
-- What is the difference to a user betwen `extract_at_buffer` with a kernel weight and `summary_aw` an area-weighted summary? What is the difference between `par_make_grid` and `par_make_gridset`?
+- What is the difference to a user between `extract_at_buffer` with a kernel weight and `summary_aw` an area-weighted summary? What is the difference between `par_make_grid` and `par_make_gridset`?
 - If `par_group_grid` is an extension of par_group_balanced for padded grids, should it be renamed something like `par_group_balanced_padded`? Or should `padded = TRUE` be added as an argument?
 - Are regular R users going to find useful functions here or is {chopin} just for HPC users?
 
@@ -84,13 +86,13 @@ Description: It enables users with basic understanding on geospatial data
     function as well.
 ```
 
-**Suggestions**: 
+Suggestions: 
 
 - I think there's a lot of useful information in the [flowchart](https://github.com/NIEHS/chopin/blob/main/man/figures/README-flowchart-mermaid-1.png), how can we incorporate more obviously?
-- No need to repeat the package name, capitalised, in the title
+- No need to repeat the package name, capitalized, in the title
 - I think the acronym is neat, but the name stands on it's own. Broadening the scope would help users understand how they can use {chopin} and this starts at the title
 - I don't think it's necessary to state the expectations of users in the description
-- Read examples [here](https://cran.r-project.org/web/packages/available_packages_by_name.html)
+- See more examples [here](https://cran.r-project.org/web/packages/available_packages_by_name.html)
 
 ```
 Package: chopin
@@ -109,7 +111,6 @@ Another reason that I might be finding {chopin} hard to get started using is tha
 
 This is definitely an open ended comment - I just wonder where the point is for users where hiding away managing regular steps in a spatial analysis (like projections, extents, clipping, etc) actually results in more confusion than it helps. 
 
-
 ---
 
 My last general comment is - how do you envision {chopin} fitting into the broader [High Performance Computing](https://cran.r-project.org/web/views/HighPerformanceComputing.html) landscape in R? One thing I'm personally really interested is how it might interface with {targets}. Looks like maybe I'm saved from commenting too much on this, as my coreviewr @Aariq is one of the authors on the new [{geotargets}](https://github.com/njtierney/geotargets) package along with @njtierney and @brownag (thank you!). I have been eagerly following their progress as a regular {targets} user that has encountered the challenges of including spatial data in {targets} workflows. I wonder how these tools can be brought together or, alternatively, how the authors might communicate their differences and where a user might choose one over the other. 
@@ -119,7 +120,7 @@ My last general comment is - how do you envision {chopin} fitting into the broad
 
 ##### System requirements
 
-**Suggestions**:
+Suggestions:
 
 - Consider listing system requirements  (eg. netcdf) using recommendations [here](https://github.com/rstudio/r-system-requirements)
 - See example from [{magick}](https://github.com/ropensci/magick/blob/master/DESCRIPTION#L20)
@@ -127,7 +128,7 @@ My last general comment is - how do you envision {chopin} fitting into the broad
 
 ##### Vignettes
 
-**Issues**:
+Issues:
 
 An overview of the vignettes and README material:
 
@@ -161,6 +162,7 @@ Consider incorporating a section in the introductory vignette with a caveats sec
 - comparing single thread vs multi thread calculations
 - why we turn off spherical geometry
 
+Consider revising the vignettes and README to develop bullet points into paragraphs. Some shorter lists to compare options or list steps can be helpful but, generally, I find a full page of bullets hard to process. 
 
 Images on the website are giving 404 errors
 - Generate computational grids
@@ -171,16 +173,12 @@ Package issues
         - packages 
         - consider loading packages in way that most users will be more familiar with eg. `library(chopin)`
 
-Using :: or both :: and library in vignettes
+Using :: or both :: and library in vignettes (users are likely more familiar with `library()`)
 - Generate computational grids
 - Extracting Weather/Climate Geospatial Data with `chopin`
 
 
-**Suggestions**:
-
-Consider revising to develop bullet points into paragraphs. Some shorter lists to compare options or list steps can be helpful but, generally, I find a full page of bullets hard to process. 
-- Generate computational grids
-- Good practice of using `chopin` in HPC
+Suggestions:
 
 Missing link to external functions / packages
 - Generate computational grids
@@ -195,13 +193,13 @@ Missing link to external functions / packages
 
 ##### Function documentation
 
-**Issues**:
+Issues:
 
 Missing top-level documentation
 - See [`usethis::use_package_doc`](https://usethis.r-lib.org/reference/use_package_doc.html)
 - Consider using this space to translate the flowchart into a written overview of the main functions with inputs and outputs
 
-**Suggestions**:
+Suggestions:
 
 Missing links to {chopin} functions, external functions, other packages
 - anticlust `par_group_balanced`
@@ -230,13 +228,13 @@ Use of ...
 
 ##### Examples
 
-**Issues**:
+Issues:
 
 Missing example
 - `extract_at` (reuse example see [roxygen2 vignette](https://roxygen2.r-lib.org/articles/reuse.html))
 
 
-**Suggestions**:
+Suggestions:
 
 Examples not run with `if (FALSE)` or dontrun. Consider a smaller toy example?
 - `par_grid`
@@ -255,7 +253,7 @@ Using :: or both :: and library in examples
 
 ##### Community guidelines
 
-**Issues**:
+Issues:
 
 There are no contributing guidelines in the README or CONTRIBUTING
 
@@ -264,7 +262,7 @@ There are no contributing guidelines in the README or CONTRIBUTING
 
 ##### Automated tests
 
-**Issues**: 
+Issues: 
 
 There is good test coverage in the package but I am a bit concerned about the number of times the authors use the `expect_no_error` function. 
 When I think of effective package testing, I think of both clarity for the user reading the tests and in the authors setting up expectations for how the package may fail (anticipating your own errors, warnings or messages). What does the test `expect_no_error` communicate to the user or set up as expectations?
@@ -377,7 +375,7 @@ counts[, .N, .(path, V1)][order(path, -N)]
 
 ##### Packaging guidelines
 
-**Issues**: 
+Issues: 
 
 URLs
 - Found some URLs moved or broken
@@ -421,7 +419,7 @@ Functions
     - Could consider using `st_crs(polys) == st_crs(surf)` instead of assuming the same coordinate reference systems are used
     
 
-**Suggestions**:
+Suggestions:
 
 codemetar
 - consider some of [these ways](https://github.com/ropensci/codemetar?tab=readme-ov-file#keep-codemetajson-up-to-date) to keep it up to date
@@ -435,7 +433,7 @@ Code style
 - see this branch in my fork for what the results would look like: https://github.com/robitalec/chopin/tree/fix/styler
 
 Citation file
--  consider additing a CITATION file with `usethis::use_citation()`, see [here](https://devguide.ropensci.org/pkg_building.html#citation-file)
+-  consider adding a CITATION file with `usethis::use_citation()`, see [here](https://devguide.ropensci.org/pkg_building.html#citation-file)
 
 README
 - Consider mentioning related packages or alternative approaches
