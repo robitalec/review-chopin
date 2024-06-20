@@ -107,7 +107,9 @@ Description: It enables users to parallelize geospatial operations over
 
 ---
 
-Another reason that I might be finding {chopin} hard to get started using is that it seems to obscure lots of the regular terra/sf steps I would do myself as an R user. For example, the `extract_at_buffer` wraps the `exact_extract` function from {exactextractr} but before calling it, it runs `terra::buffer`, manages projections, crops, calculates extents, etc. This is also the case in functions like `reproject_std` and `vect_valid_repair` which reproject/repair objects using functions terra or sf based on the object type. 
+Another reason that I might be finding {chopin} hard to get started using is that it seems to obscure lots of the regular terra/sf steps I would typically do myself as an R user. For example, the `extract_at_buffer` wraps the `exact_extract` function from {exactextractr} but before calling it, it runs `terra::buffer`, manages projections, crops, calculates extents, etc. This is also the case in functions like `reproject_std` and `vect_valid_repair` which reproject/repair objects using functions terra or sf based on the object type. 
+
+This also shows itself where the authors manually switch within functions depending on terra or sf input. For example, using `dep_check` and testing `if == 'terra' else if  == 'sf'`. This feels like an opportunity to take advantage of S3 methods. Read more in [Advanced R: S3](https://adv-r.hadley.nz/s3.html#s3-methods) and [R Packages: 11.9](https://r-pkgs.org/dependencies-in-practice.html#imports-and-exports-related-to-s3). An example applied is in {tmap}'s internal function [`tmapShape`](https://github.com/r-tmap/tmap/blob/master/R/tmapShape.R#L61-L174). Obviously this would require a fair amount of refactoring - I just wanted to highlight an alternative approach that might be more flexible to adding new supported data types in the future. 
 
 This is definitely an open ended comment - I just wonder where the point is for users where hiding away managing regular steps in a spatial analysis (like projections, extents, clipping, etc) actually results in more confusion than it helps. 
 
@@ -411,6 +413,10 @@ README
     - could use details for installing dependencies, system requirements
     - no need to list devtools install if listing remotes since devtools just wraps remotes
     - remove commented out install.packages() until {chopin} is on CRAN
+- `git clone https://github.com/Spatiotemporal-Exposures-and-Toxicology/chopin`
+    - repo moved
+- `source(\"README_run.r\")`
+    - DiagrammeR needs to be installed, consider adding to the rlang check installed line
 
 Functions
 - `par_cut_coords`
